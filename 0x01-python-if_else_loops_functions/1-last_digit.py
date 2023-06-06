@@ -9,7 +9,7 @@ if number < 10:
 if j > 5 and j != 0:
     print('Last digit of {} is {} and is greater than 5'.format(number,
                                                                 j))
-elif last < 6 and j != 0:
+elif j < 6 and j != 0:
     print('Last digit of {} is {} and is less than 6 and not 0'
           .format(number, j))
 else:
