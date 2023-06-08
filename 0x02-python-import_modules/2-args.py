@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from sys import argv
-#prints number of arguments
 
 if __name__ == "__main__":
 
