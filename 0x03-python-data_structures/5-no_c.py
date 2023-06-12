@@ -2,14 +2,6 @@
 
 
 def no_c(my_string):
-    str_list = list(my_string)
-    try:
-        str_list.remove('c')
-    except ValueError:
-        pass
-    try:
-        str_list.remove('C')
-    except ValueError:
-        pass
-    my_string = ''.join(str_list)
-    return my_string
+    if my_string is not None:
+        return ''.join(filter(lambda c: c.lower() != 'c', my_string))
+    return None
