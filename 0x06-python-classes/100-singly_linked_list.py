@@ -1,10 +1,10 @@
 #!/usr/bin/python3
-""" Package providing a 'Node' class for a singly-linked list
+""" Module providing a 'Node' class for a singly-linked list
 """
 
 
 class Node():
-    """ Specification of a singly-linked list node
+    """ Definition of a singly-linked list node
     """
     def __init__(self, data, next_node=None):
         """ Instantiate a node
@@ -41,7 +41,7 @@ class Node():
 
 
 class SinglyLinkedList():
-    """ Specification of a singly-linked list
+    """ Definition of a singly-linked list
     """
     def __init__(self):
         """ Instantiate a singly-linked list
@@ -49,9 +49,9 @@ class SinglyLinkedList():
         self.__head = None
 
     def __str__(self):
-        """ Show a visual representation of a list
+        """ Generate a visual representation of a list
         """
 
     def sorted_insert(self, value):
-        """ Create a Node into a list sorted in ascending order
+        """ Inset a Node into a list sorted in ascending order
         """
