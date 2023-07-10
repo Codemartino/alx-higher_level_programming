@@ -1,20 +1,33 @@
 #!/usr/bin/python3
-""" Provides a base class for geometric objects
+"""
+    BaseGeometry module
 """
 
 
-class BaseGeometry:
-    """ Declaration of a base class for geometric objects
+class BaseGeometry():
+    """
+        BaseGeometry Class
     """
     def area(self):
-        """ Calculate the area of a geometric object
+        """
+            public instance
+            Raise:
+                Exception: Area not implemented
+
         """
         raise Exception("area() is not implemented")
 
     def integer_validator(self, name, value):
-        """ Verify that a value is a positive integer
+        """
+            Public instance  that validates value
+            Args:
+                name (string): name
+                value(int): Value
+            Raises:
+                TypeError: When Value is not int
+                ValueError: When Value less or equal to 0
         """
         if type(value) is not int:
             raise TypeError("{} must be an integer".format(name))
-        if value < 1:
+        if value <= 0:
             raise ValueError("{} must be greater than 0".format(name))
