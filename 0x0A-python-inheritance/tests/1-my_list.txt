@@ -1,48 +1,60 @@
->>> MyList = __import__("1-my_list").MyList
->>> ls = MyList()
->>> ls.print_sorted()
-[]
->>> ls.append(0)
->>> ls.print_sorted()
-[0]
->>> ls.append(1)
->>> ls.print_sorted()
-[0, 1]
->>> ls.append(-1)
->>> print(ls)
-[0, 1, -1]
->>> ls.print_sorted()
-[-1, 0, 1]
->>> print(ls)
-[0, 1, -1]
->>> ls.clear()
->>> ls.append('z')
->>> ls.print_sorted()
-['z']
->>> ls.append('a')
->>> ls.print_sorted()
-['a', 'z']
->>> ls.append(0)
->>> ls.print_sorted()
+>>> BaseGeometry = __import__("7-base_geometry").BaseGeometry
+>>> bg = BaseGeometry(1)
 Traceback (most recent call last):
   ...
-TypeError: unorderable types: int() < str()
->>> ls.reverse()
->>> ls.print_sorted()
+TypeError: object() takes no parameters
+>>> bg = BaseGeometry()
+>>> bg.area(1)
 Traceback (most recent call last):
   ...
-TypeError: unorderable types: str() < int()
->>> ls.clear()
->>> ls.append(float("inf"))
->>> ls.append(0)
->>> ls.append(float("-inf"))
->>> ls.print_sorted()
-[-inf, 0, inf]
->>> ls.clear()
->>> ls.append(0)
->>> ls.append(float("nan"))
->>> ls.print_sorted()
-[0, nan]
->>> ls.reverse()
->>> ls.print_sorted()
-[nan, 0]
+TypeError: area() takes 1 positional argument but 2 were given
+>>> bg.area()
+Traceback (most recent call last):
+  ...
+Exception: area() is not implemented
+>>> bg.integer_validator()
+Traceback (most recent call last):
+  ...
+TypeError: integer_validator() missing 2 required positional arguments: 'name' and 'value'
+>>> bg.integer_validator("value", 1, 2)
+Traceback (most recent call last):
+  ...
+TypeError: integer_validator() takes 3 positional arguments but 4 were given
+>>> bg.integer_validator("value", None)
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", False)
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", "0")
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", (0,))
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", {0, 1})
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", [0, 1])
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", 0.0)
+Traceback (most recent call last):
+  ...
+TypeError: value must be an integer
+>>> bg.integer_validator("value", -1)
+Traceback (most recent call last):
+  ...
+ValueError: value must be greater than 0
+>>> bg.integer_validator("value", 0)
+Traceback (most recent call last):
+  ...
+ValueError: value must be greater than 0
+>>> bg.integer_validator("value", 1)
+>>> bg.integer_validator("value", 2)
