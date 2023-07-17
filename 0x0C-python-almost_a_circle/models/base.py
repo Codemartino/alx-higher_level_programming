@@ -1,113 +1,136 @@
 #!/usr/bin/python3
+"""Provides a base class for all other classes in this module
 """
-Base Module
-"""
+
 import json
-import csv
+import turtle
 
 
-class Base:
+class Base():
+    """Base class for all other classes in this module
     """
-    The Base Class
-    Attributes:
-        __nb_object : private class atribute
-    """
+    HEADERS = ('id',)
+
     __nb_objects = 0
 
     def __init__(self, id=None):
+        """Instantiate a base object
         """
-        Init
-        Attributes:
-            id (): id
-        """
-        if id is not None:
-            self.id = id
+        if id is None:
+            self.__class__.__nb_objects += 1
+            self.id = self.__class__.__nb_objects
         else:
-            Base.__nb_objects += 1
-            self.id = Base.__nb_objects
+            self.id = id
 
     @staticmethod
-    def to_json_string(list_dictionaries):
+    def draw(list_rectangles, list_squares):
+        """Draw rectangles and squares in a new window
         """
-            Return A JSON STRING a representation list_dict..
-        """
-        if not list_dictionaries:
-            return "[]"
-        return json.dumps(list_dictionaries)
-
-    @classmethod
-    def save_to_file(cls, list_objs):
-        """
-            Save Dict To Json
-        """
-        d = []
-        with open(cls.__name__ + ".json", "w", encoding="utf-8") as f:
-            if list_objs:
-                for obj in list_objs:
-                    d.append(obj.to_dictionary())
-            f.write(cls.to_json_string(d))
+        shapes = []
+        if list_rectangles:
+            shapes.extend(list_rectangles)
+        if list_squares:
+            shapes.extend(list_squares)
+        pen = turtle.Turtle()
+        pen.pen(pencolor='black', pendown=False, pensize=2, shown=False)
+        for shape in shapes:
+            pen.penup()
+            pen.setpos(shape.x, shape.y)
+            pen.pendown()
+            pen.forward(shape.width)
+            pen.right(90)
+            pen.forward(shape.height)
+            pen.right(90)
+            pen.forward(shape.width)
+            pen.right(90)
+            pen.forward(shape.height)
+            pen.right(90)
 
     @staticmethod
     def from_json_string(json_string):
+        """Return the list defined by a JSON string
         """
-            Write Json Representation of String
-        """
-        if not json_string:
+        if json_string is None:
             return []
         return json.loads(json_string)
 
-    @classmethod
-    def create(cls, **dictionary):
+    @staticmethod
+    def to_json_string(list_dictionaries):
+        """Return a JSON representation a list of dictionaries
         """
-            returns an instance with
-            all attributes already set
-        """
-        if cls.__name__ == 'Rectangle':
-            a = cls(1, 1)
-        if cls.__name__ == 'Square':
-            a = cls(1)
-        a.update(**dictionary)
-        return a
+        if list_dictionaries is None:
+            return '[]'
+        return json.dumps(list_dictionaries)
 
     @classmethod
     def load_from_file(cls):
-        """
-            Load List of Instance from JSON File
+        """Load the objects defined in the JSON file <class-name>.json
         """
         try:
-            with open(cls.__name__ + ".json", "r") as f:
-                return [cls.create(**dictionary) for
-                        dictionary in cls.from_json_string(f.read())]
+            with open("{}.json".format(cls.__name__), 'r') as ifile:
+                return [cls.create(**obj)
+                        for obj in cls.from_json_string(ifile.read())]
         except FileNotFoundError:
             return []
-
-    @classmethod
-    def save_to_file_csv(cls, list_objs):
-        """save_to_file_csv"""
-        ld = []
-        with open(cls.__name__ + ".csv", "w", encoding="utf-8") as f:
-            if list_objs:
-                for obj in list_objs:
-                    if cls.__name__ == 'Rectangle':
-                        ld.append([
-                            obj.id, obj.width, obj.height, obj.x, obj.y])
-                    if cls.__name__ == 'Square':
-                        ld.append([obj.id, obj.size, obj.x, obj.y])
-            writer = csv.writer(f)
-            for row in ld:
-                writer.writerow(row)
 
     @classmethod
     def load_from_file_csv(cls):
-        """load_from_file_csv"""
+        """Save a CSV representation of list_objs to <class_name>.json
+        """
         try:
-            with open(cls.__name__ + ".csv", "r") as f:
-                ld = []
-                reader = csv.DictReader(f)
-                for row in reader:
-                    for key, val in row.items():
-                        row[key] = int(val)
-                ld.append(row)
-                return [cls.create(**item) for item in ld]
+            with open("{}.csv".format(cls.__name__), 'r') as ifile:
+                return [cls.create(
+                    **{k: int(v) for k, v in zip(cls.HEADERS, line.split(','))}
+                ) for line in ifile.readlines()]
         except FileNotFoundError:
             return []
+
+    @classmethod
+    def save_to_file(cls, list_objs):
+        """Save a JSON representation of list_objs to <class-name>.json
+        """
+        with open("{}.json".format(cls.__name__), 'w') as ofile:
+            if list_objs:
+                ofile.write(cls.to_json_string(
+                    [obj.to_dictionary() for obj in list_objs]
+                ))
+            else:
+                ofile.write("[]")
+
+    @classmethod
+    def save_to_file_csv(cls, list_objs):
+        """Save a CSV representation of list_objs to <class-name>.json
+        """
+        with open("{}.csv".format(cls.__name__), 'w') as ofile:
+            if list_objs:
+                for obj in list_objs:
+                    obj = obj.to_dictionary()
+                    ofile.write(
+                        ','.join(str(obj[key]) for key in cls.HEADERS) + '\n'
+                    )
+
+    @classmethod
+    def create(cls, **dictionary):
+        """Return a new instance of cls with its attributes set
+        """
+        args = []
+        while True:
+            try:
+                obj = cls(*args)
+            except TypeError:
+                args.append(1)
+            else:
+                break
+        obj.update(**dictionary)
+        return obj
+
+    def update(self, *args, **kwargs):
+        """Update the attributes of a base object
+        """
+        if args:
+            for pair in zip(self.HEADERS, args):
+                setattr(self, *pair)
+        else:
+            for key in kwargs:
+                if key in self.HEADERS:
+                    setattr(self, key, kwargs[key])
