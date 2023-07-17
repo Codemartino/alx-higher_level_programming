@@ -1,84 +1,140 @@
 #!/usr/bin/python3
-"""
-Contains tests for Base class
+"""Provides unittest for the 'Base' class provided by the 'models' module
 """
 
 import unittest
 import json
-from models import base
-Base = base.Base
+from os import chdir, getcwd, remove
+from shutil import rmtree
+from tempfile import mkdtemp
+
+from models.base import Base
 
 
 class TestBase(unittest.TestCase):
-    """check functionality of Base class"""
-    def _too_many_args(self):
-        """testing too many args to init"""
-        with self.assertRaises(TypeError):
-            b = Base(1, 1)
+    """Test base model methods
+    """
+    def setUp(self):
+        """Create a temporary directory and Base instance
+        """
+        self.base = Base()
+        chdir(mkdtemp())
 
-    def _no_id(self):
-        """Testing id as None"""
-        b = Base()
-        self.assertEqual(b.id, 1)
+    def tearDown(self):
+        """Remove temporary files and directories
+        """
+        rmtree(getcwd(), ignore_errors=True)
 
-    def _id_set(self):
-        """Testing id as not None"""
-        b98 = Base(98)
-        self.assertEqual(b98.id, 98)
+    def test_base(self):
+        """Test the __init__ method
+        """
+        self.assertIsInstance(self.base, Base)
 
-    def _no_id_after_set(self):
-        """Testing id as None after not None"""
-        b2 = Base()
-        self.assertEqual(b2.id, 2)
+    def test_base_id(self):
+        """Test the __init__ method
+        """
+        self.assertIsInstance(self.base.id, int)
+        self.assertGreater(self.base.id, 0)
 
-    def _nb_private(self):
-        """Testing nb_objects as a private instance attribute"""
-        b = Base(3)
-        with self.assertRaises(AttributeError):
-            print(b.nb_objects)
-        with self.assertRaises(AttributeError):
-            print(b.__nb_objects)
+    def test_init_type(self):
+        """Test the __init__ method
+        """
+        types = (int, float, str, tuple, list, dict, set, bool)
+        self.assertIsInstance(Base(), Base)
+        self.assertIsInstance(Base(0), Base)
+        for value in [t() for t in types] + [None, type]:
+            self.assertIsInstance(Base(id=value), Base)
 
-    def _to_json_string(self):
-        """Testing regular to json string"""
-        Base._Base__nb_objects = 0
-        d1 = {"id": 9, "width": 5, "height": 6, "x": 7, "y": 8}
-        d2 = {"id": 2, "width": 2, "height": 3, "x": 4, "y": 0}
-        json_s = Base.to_json_string([d1, d2])
-        self.assertTrue(type(json_s) is str)
-        d = json.loads(json_s)
-        self.assertEqual(d, [d1, d2])
+    def test_init_id_equality(self):
+        """Test the __init__ method
+        """
+        types = (int, float, str, tuple, list, dict, set, bool)
+        self.assertNotEqual(self.base.id, Base().id)
+        self.assertNotEqual(self.base.id, Base(id=None).id)
+        self.assertEqual(Base(0).id, 0)
+        for value in (t() for t in types):
+            self.assertEqual(Base(id=value).id, value)
 
-    def _empty_to_json_string(self):
-        """Test for passing empty list"""
-        json_s = Base.to_json_string([])
-        self.assertTrue(type(json_s) is str)
-        self.assertEqual(json_s, "[]")
+    def test_init_id_identity(self):
+        """Test the __init__ method
+        """
+        self.assertIs(Base(id=type).id, type)
 
-    def _None_to_json_String(self):
-        """testting None to a json"""
-        json_s = Base.to_json_string(None)
-        self.assertTrue(type(json_s) is str)
-        self.assertEqual(json_s, "[]")
+    def test_init_id_type(self):
+        """Test the __init__ method
+        """
+        self.assertIsInstance(Base().id, int)
+        self.assertIsInstance(Base(id=None).id, int)
 
-    def _from_json_string(self):
-        """Tests normal from_json_string"""
-        json_str = '[{"id": 9, "width": 5, "height": 6, "x": 7, "y": 8}, \
-{"id": 2, "width": 2, "height": 3, "x": 4, "y": 0}]'
-        json_l = Base.from_json_string(json_str)
-        self.assertTrue(type(json_l) is list)
-        self.assertEqual(len(json_l), 2)
-        self.assertTrue(type(json_l[0]) is dict)
-        self.assertTrue(type(json_l[1]) is dict)
-        self.assertEqual(json_l[0],
-                         {"id": 9, "width": 5, "height": 6, "x": 7, "y": 8})
-        self.assertEqual(json_l[1],
-                         {"id": 2, "width": 2, "height": 3, "x": 4, "y": 0})
+    def test_init_raises(self):
+        """Test the __init__ method
+        """
+        self.assertRaisesRegex(
+            TypeError,
+            ".*\\b__init__\\(\\) takes from 1 to 2 positional arguments\\b.*",
+            Base, 0, 0
+        )
 
-    def _frjs_empty(self):
-        """Tests from_json_string  empty string"""
-        self.assertEqual([], Base.from_json_string(""))
+    def test_create_type(self):
+        """Test the create method
+        """
+        types = (int, float, str, tuple, list, dict, set, bool)
+        self.assertIsInstance(Base.create(), Base)
+        for value in [t() for t in types] + [None, type]:
+            self.assertIsInstance(Base.create(id=value), Base)
 
-    def _frjs_None(self):
-        """Testing from_json_string   none string"""
-        self.assertEqual([], Base.from_json_string(None))
+    def test_create_id_equality(self):
+        """Test the create method
+        """
+        types = (int, float, str, tuple, list, dict, set, bool)
+        self.assertNotEqual(self.base.id, Base.create().id)
+        for value in (t() for t in types):
+            self.assertEqual(Base.create(id=value).id, value)
+
+    def test_create_id_identity(self):
+        """Test the create method
+        """
+        self.assertIsNone(Base.create(id=None).id)
+        self.assertIs(Base.create(id=type).id, type)
+
+    def test_create_id_type(self):
+        """Test the create method
+        """
+        self.assertIsInstance(Base.create().id, int)
+
+    def test_create_raises(self):
+        """Test the create method
+        """
+        self.assertRaisesRegex(
+            TypeError,
+            ".*\\bcreate\\(\\) takes 1 positional argument\\b.*",
+            Base.create, 0
+        )
+
+    def test_to_json_string_equality(self):
+        """Test the to_json_string method
+        """
+        types = (int, float, str, tuple, list, dict, bool)
+        lists = ([{'a': 1}], [{'a': 1}, {'a': 2, 'b': 3}])
+        self.assertEqual(Base.to_json_string(None), json.dumps([]))
+        for value in (t() for t in types):
+            self.assertEqual(Base.to_json_string(value), json.dumps(value))
+            self.assertEqual(Base.to_json_string([value]), json.dumps([value]))
+        for value in lists:
+            self.assertEqual(Base.to_json_string(value), json.dumps(value))
+
+    def test_save_to_file(self):
+        """Test the save_to_file method
+        """
+        types = (int, float, str, tuple, list, dict, bool)
+        bases = [self.base] + [Base(id=t()) for t in types]
+        fname = 'Base.json'
+        try:
+            remove(fname)
+        except FileNotFoundError:
+            pass
+        self.assertIsNone(Base.save_to_file(None))
+        with open(fname) as ifile:
+            self.assertEqual(ifile.read(), '[]')
+        for index in range(len(bases)):
+            self.assertRaises(AttributeError, Base.save_to_file, bases[index:])
