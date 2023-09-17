@@ -1,34 +1,30 @@
-st all states starting with 'N' from a MySQL db on localhost at port 3306
+#!/usr/bin/python3
 """
-
-from mysqlman import MySQLMan
-from MySQLdb import Error
-from sys import argv, exit, stderr
-
-
-HELP = '{} username password database'.format(argv[0])
-HOST = 'localhost'
-PORT = 3306
+Module list state where name start with N
+"""
+import sys
+import MySQLdb
 
 
-if __name__ == '__main__':
-        try:
-                mysqlman = MySQLMan(
-                            connect=True,
-                                        user=argv[1],
-                                                    password=argv[2],
-                                                                database=argv[3],
-                                                                            host=HOST,
-                                                                                        port=PORT,
-                                                                                                )
-                                                                                                    except IndexError:
-                                                                                                            stderr.write('usage: {}\n'.format(HELP))
-                                                                                                                    exit(2)
-                                                                                                                        except Error as e:
-                                                                                                                                stderr.write('{}\n'.format(e.args[1]))
-                                                                                                                                        exit(1)
-                                                                                                                                            query = "SELECT id, name FROM states ORDER BY id;"
-                                                                                                                                                results = mysqlman.query([query, ()])
-                                                                                                                                                    for row in results[0]:
-                                                                                                                                                            if row[1].startswith('N'):
-                                                                                                                                                                        print(row)
+def main():
+        conn = MySQLdb.connect(
+                                        host="localhost",
+                                                                port=3306,
+                                                                                        user=sys.argv[1],
+                                                                                                                passwd=sys.argv[2],
+                                                                                                                                        db=sys.argv[3],
+                                                                                                                                                                charset="utf8"
+                                                                                                                                                                                            )
+            cur = conn.cursor()
+                query = "SELECT * FROM states WHERE name LIKE 'N%' ORDER BY id ASC"
+                    cur.execute(query)
+                        row = cur.fetchall()
+                            for r in row:
+                                        if r[1][0] == 'N':
+                                                        print(r)
+                                                            cur.close()
+                                                                conn.close()
+
+
+                                                                if __name__ == "__main__":
+                                                                        main()
