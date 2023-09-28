@@ -35,7 +35,10 @@ The biggest difficulty with ORM is: The syntax!
 Indeed, all of them have the same type of syntax, but not always. Please read tutorials and don’t read the entire documentation before starting, just jump on it if you don’t get something.
 
 
+<<<<<<< HEAD
+=======
 
+>>>>>>> f009023b3dcbfe7e9713b4b9930b3a76a67e9e37
 Install and activate venv
 To create a Python Virtual Environment, allowing you to install specific dependencies for this python project, we will install venv:
 
@@ -67,3 +70,18 @@ Also, you can have this warning message:
 moved in a future release.")                                                                                                                    
   cursor.execute(statement, parameters)  
 You can ignore it.
+<<<<<<< HEAD
+
+Tasks
+0. Get all states
+mandatory
+Write a script that lists all states from the database hbtn_0e_0_usa:
+
+Your script should take 3 arguments: mysql username, mysql password and database name (no argument validation needed)
+You must use the module MySQLdb (import MySQLdb)
+Your script should connect to a MySQL server running on localhost at port 3306
+Results must be sorted in ascending order by states.id
+Results must be displayed as they are in the example below
+Your code should not be executed when imported
+=======
+>>>>>>> f009023b3dcbfe7e9713b4b9930b3a76a67e9e37
