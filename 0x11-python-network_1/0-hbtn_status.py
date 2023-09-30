@@ -1,17 +1,15 @@
 #!/usr/bin/python3
-'''
-Makes a request and prints information about the body of the response
-'''
-
-from urllib.request import urlopen
-
-URL = 'https://intranet.hbtn.io/status'
+"""
+fetch holberton /statue page
+"""
 
 if __name__ == '__main__':
+    import urllib.request
+    req = urllib.request.Request('https://intranet.hbtn.io/status')
+    with urllib.request.urlopen(req) as response:
+        html = response.read()
 
-    with urlopen(URL) as r:
-        body = r.read()
-        print("Body response:")
-        print("\t- type:", type(body))
-        print("\t- content:", body)
-        print("\t- utf8 content:", body.decode())
+    print("Body response:")
+    print("\t- type: {}".format(html.__class__))
+    print("\t- content: {}".format(html))
+    print("\t- utf8 content: {}".format(html.decode('ascii')))
